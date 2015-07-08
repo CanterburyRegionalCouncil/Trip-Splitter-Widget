@@ -30,13 +30,14 @@ function(declare, BaseWidgetSetting) {
     },
 
     setConfig: function(config){
-      this.textNode.value = config.configText;
+      this.closestFacilityService.value = config.closestFacilityService;
     },
 
     getConfig: function(){
+      
       //WAB will get config object through this method
       return {
-        configText: this.textNode.value
+        closestFacilityService: this.closestFacilityService.value
       };
     }
   });
