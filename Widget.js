@@ -11,19 +11,19 @@ var closestFacilityService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/servic
 var routeService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route';
 
 // X/Y Locations of Depots.
-// var depotLocs = [
-//     '75 Church Street, Timaru', // Timaru
-//     '17 Sir Gil Simpson Drive, Burnside, Christchurch ', // Christchurch
-//     '5 Markham Street, Amberley', // Amberley
-//     '73 Beach Road, Kaikoura'  // Kaikoura
-// ];
-
 var depotLocs = [
-    [1460349.4084,5082561.0188], // Timaru
-    [1558900.7229,5167823.4527], // Christchurch
-    [1577887.9281,5222124.0212], // Amberley
-    [1655889.3952,5306371.3995]  // Kaikoura
-]
+    '73 Church Street, Timaru', // Timaru
+    '22 Edward Street, Lincoln', // Christchurch
+    '5 Markham Street, Amberley', // Amberley
+    '73 Beach Road, Kaikoura'  // Kaikoura
+];
+
+// var depotLocs = [
+//     [1460349.4084,5082561.0188], // Timaru
+//     [1558900.7229,5167823.4527], // Christchurch
+//     [1577887.9281,5222124.0212], // Amberley
+//     [1655889.3952,5306371.3995]  // Kaikoura
+// ]
 
 
 // REST endpoint of consents
@@ -165,6 +165,7 @@ function(declare, BaseWidget,
 // the consents and the start and end locations of the route.
     var consentRenderer = new SimpleRenderer(ConsentSymbol);
     var startEndRenderer = new SimpleRenderer(PointSymbol);
+    var Renderer = new SimpleRenderer(PointSymbol);
 
     // layer to show chosen consent locations
     consentLoclayer = new GraphicsLayer();
@@ -199,9 +200,6 @@ function(declare, BaseWidget,
         // show loading image
         toggle_visibility('calcloading','show');
 
-        // default renderer, nothing is shown on the map.locatt
-        var Renderer = new SimpleRenderer(PointSymbol);
-
         // setup closest facility parameters
         var params = new ClosestFacilityParameters();
         params.impedenceAttribute= "length";            
@@ -210,33 +208,6 @@ function(declare, BaseWidget,
         params.returnDirections=true;
         params.outSpatialReference = sRef;
         var closestFacilityTask = new ClosestFacilityTask(closestFacilityService);
-
-        // hard code the four depot locations
-        var facilitiesGraphicsLayer = new GraphicsLayer();
-        facilitiesGraphicsLayer.setRenderer(Renderer);
-
-        // contains graphics of each depot
-        depotGraphic = [];
-
-        // add the locations to a layer
-        for (i in depotLocs) {
-            // var locator = new esri.tasks.Locator(geoCoder);
-            // locator.outSpatialReference = sRef;
-            // console.log(depotLocs[i]);
-            // var optionsFrom = {
-            //     address: { "SingleLine": depotLocs[i] },
-            //     outFields: ["Loc_name"]
-            // };
-
-            // locator.addressToLocations(optionsFrom);
-            // locator.on('address-to-locations-complete',lang.hitch(this,function(evt){
-            //     console.log(evt);
-            //     facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
-
-            //     })); 
-        depotGraphic.push(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
-        facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
-        }
 
         // add the facilities (depots)
         var facilities = new FeatureSet();
@@ -632,13 +603,13 @@ function(declare, BaseWidget,
 
             if (document.getElementById('startSelect').value !== 'default'){
                 if (document.getElementById('startSelect').value === 'Timaru'){
-                    var startLoc = depotLocs[0];
+                    var startLoc = depotGraphic[0];
                 } else if (document.getElementById('startSelect').value === 'Christchurch'){
-                    var startLoc = depotLocs[1];
+                    var startLoc = depotGraphic[1];
                 } else if (document.getElementById('startSelect').value === 'Amberley'){
-                    var startLoc = depotLocs[2];
+                    var startLoc = depotGraphic[2];
                 } else {
-                    var startLoc = depotLocs[3];
+                    var startLoc = depotGraphic[3];
                 }
             } else {
                 var startLoc = [startGeocoder.results[0].feature.geometry.x,startGeocoder.results[0].feature.geometry.y];
@@ -646,21 +617,21 @@ function(declare, BaseWidget,
 
             if (document.getElementById('endSelect').value !== 'default'){
                 if (document.getElementById('endSelect').value === 'Timaru'){
-                    var endLoc = depotLocs[0];
+                    var endLoc = depotGraphic[0];
                 } else if (document.getElementById('endSelect').value === 'Christchurch'){
-                    var endLoc = depotLocs[1];
+                    var endLoc = depotGraphic[1];
                 } else if (document.getElementById('endSelect').value === 'Amberley'){
-                    var endLoc = depotLocs[2];
+                    var endLoc = depotGraphic[2];
                 } else {
-                   var endLoc = depotLocs[3]
+                   var endLoc = depotGraphic[3]
                 }
             } else {
                 var endLoc = [endGeocoder.results[0].feature.geometry.x,endGeocoder.results[0].feature.geometry.y];
             }
 
             // add geocoded locations to layer (start/end)
-            startEndlayer.add(new Graphic(new Point(startLoc[0],startLoc[1],sRef)));
-            startEndlayer.add(new Graphic(new Point(endLoc[0],endLoc[1],sRef)));
+            startEndlayer.add(new Graphic(new Point(startLoc.geometry.x,startLoc.geometry.y,sRef)));
+            startEndlayer.add(new Graphic(new Point(endLoc.geometry.x,endLoc.geometry.y,sRef)));
             this.map.addLayer(startEndlayer);
 
             // setup route parameters
@@ -734,6 +705,34 @@ function(declare, BaseWidget,
 
         // setup the three different geocoders. One for start locations
         // one for end locations and the last ass an alternative for entering a consent
+
+                // hard code the four depot locations
+        facilitiesGraphicsLayer = new GraphicsLayer();
+        facilitiesGraphicsLayer.setRenderer(Renderer);
+
+        // contains graphics of each depot
+        depotGraphic = [];
+
+        // add the locations to a layer
+        for (i in depotLocs) {
+            var locator = new esri.tasks.Locator(geoCoder);
+            locator.outSpatialReference = sRef;
+            console.log(depotLocs[i]);
+            var optionsFrom = {
+                address: { "SingleLine": depotLocs[i] },
+                outFields: ["Loc_name"]
+            };
+
+            locator.addressToLocations(optionsFrom,lang.hitch(this,function(candidate){
+                var r = candidate;
+                console.log(r[0].location.x);
+                console.log(r[0].location.y);
+                facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+                depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+                })); 
+        // depotGraphic.push(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
+        // facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
+        }
 
         startGeocoder = new Geocoder({
             arcgisGeocoder: false,
