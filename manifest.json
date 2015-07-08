@@ -15,9 +15,9 @@
     "hasStyle": true,
     "hasConfig": true,
     "hasUIFile": true,
-    "hasSettingPage":true,
-    "hasSettingUIFile":true,
-    "hasSettingLocale":true,
+    "hasSettingPage":false,
+    "hasSettingUIFile":false,
+    "hasSettingLocale":false,
     "hasSettingStyle":false,
     "IsController":false
   }

@@ -1,5 +1,9 @@
 {
-  "widgetName": "TripDistanceCalculator"
-  "widgetName": "TripDistanceCalculator",
-  "configText":"test"
+	"widgetName": "TripDistanceCalculator",
+	"closestFacilityService": "http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Closest%20Facility",
+	"routeService": "http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route",
+	"depotLocs":  "73 Church Street, Timaru; 22 Edward Street, Lincoln; 5 Markham Street, Amberley; 73 Beach Road, Kaikoura",
+	"consentsLayer": "http://gis.ecan.govt.nz/arcgis/rest/services/Public/Resource_Consents/MapServer/0",
+	"geoCoder": "http://gis.ecan.govt.nz/arcgis/rest/services/Locators/Canterbury_Composite_Locator/GeocodeServer",
+	"tripSpliterURL": "/webappbuilder/apps/4/form/result.html?"
 }
