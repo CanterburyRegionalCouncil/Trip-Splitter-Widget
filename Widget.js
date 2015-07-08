@@ -284,6 +284,9 @@ function(declare, BaseWidget,
             var kaikouraDepot=[];
 
             // iterate through results and prepare to display them.
+            tripSplitResult['consents']=[];
+            tripSplitResult['closestDepot']=[];
+            tripSplitResult['depotDist']=[];
             for (i in solveResult.directions){
                 results = solveResult.directions[i];
 
