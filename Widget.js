@@ -1,4 +1,3 @@
-
 // Written By Hamish Kingsbury (Interpret Geospatial Solutions) for Environment Canterbury. This widget
 // is to be used in conjunction with Web App Builder.
 
@@ -7,34 +6,34 @@
 //////////////////////////////////////////////////////
 
 // REST enpoint of route services
-var closestFacilityService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Closest%20Facility';
-var routeService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route';
+// var closestFacilityService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Closest%20Facility';
+// var routeService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route';
 
-// X/Y Locations of Depots.
-var depotLocs = [
-    '73 Church Street, Timaru', // Timaru
-    '22 Edward Street, Lincoln', // Christchurch
-    '5 Markham Street, Amberley', // Amberley
-    '73 Beach Road, Kaikoura'  // Kaikoura
-];
-
+// // X/Y Locations of Depots.
 // var depotLocs = [
-//     [1460349.4084,5082561.0188], // Timaru
-//     [1558900.7229,5167823.4527], // Christchurch
-//     [1577887.9281,5222124.0212], // Amberley
-//     [1655889.3952,5306371.3995]  // Kaikoura
-// ]
+//     '73 Church Street, Timaru', // Timaru
+//     '22 Edward Street, Lincoln', // Christchurch
+//     '5 Markham Street, Amberley', // Amberley
+//     '73 Beach Road, Kaikoura'  // Kaikoura
+// ];
+
+// // var depotLocs = [
+// //     [1460349.4084,5082561.0188], // Timaru
+// //     [1558900.7229,5167823.4527], // Christchurch
+// //     [1577887.9281,5222124.0212], // Amberley
+// //     [1655889.3952,5306371.3995]  // Kaikoura
+// // ]
 
 
-// REST endpoint of consents
-var consentsLayer = "http://gis.ecan.govt.nz/arcgis/rest/services/Public/Resource_Consents/MapServer/0";
+// // REST endpoint of consents
+// var consentsLayer = "http://gis.ecan.govt.nz/arcgis/rest/services/Public/Resource_Consents/MapServer/0";
 
-// Address geocode
-var geoCoder = "http://gis.ecan.govt.nz/arcgis/rest/services/Locators/Canterbury_Composite_Locator/GeocodeServer";
+// // Address geocode
+// var geoCoder = "http://gis.ecan.govt.nz/arcgis/rest/services/Locators/Canterbury_Composite_Locator/GeocodeServer";
 
-// Return Address to get back to the trip splitter
-var tripSpliterURL = "/webappbuilder/apps/4//form/result.html?";
-// var tripSpliterURL = "../webapp/form/result.html?";
+// // Return Address to get back to the trip splitter
+// var tripSpliterURL = "/webappbuilder/apps/4//form/result.html?";
+// // var tripSpliterURL = "../webapp/form/result.html?";
 
 //////////////////////////////////////////////////
 //        End of changable variables.           //
@@ -175,21 +174,29 @@ function(declare, BaseWidget,
     // array to hold attribute information
     consentLocattr = [];
 
-    // layer to show start/end locations
-    startEndlayer = new GraphicsLayer();
-    startEndlayer.setRenderer(startEndRenderer);
-
     // Spatial reference of the map
     sRef = _viewerMap.__tileInfo.spatialReference;
+
 
   //To create a widget, you need to derive from BaseWidget.
   return declare([BaseWidget], {
     baseClass: 'calculate',
 
+
     //methods to communication with app container:
     postCreate: function() {
-      this.inherited(arguments);
-      console.log('Calculate::postCreate');
+        this.inherited(arguments);
+        alert(this.config.widgetName)
+
+        console.log('Calculate::postCreate');
+            // variables from config
+    // closestFacilityService = this.config.closestFacilityService;
+    // routeService = this.config.routeService;
+    // depotLocs = this.config.depotLocs;
+    // consentsLayer = this.config.consentsLayer;
+    // geoCoder = this.config.geoCoder;
+    // tripSpliterURL = this.config.tripSpliterURL;
+
     },
 
 // This function works out which depot is the closest for each point
@@ -207,7 +214,7 @@ function(declare, BaseWidget,
         params.returnRoutes=false;
         params.returnDirections=true;
         params.outSpatialReference = sRef;
-        var closestFacilityTask = new ClosestFacilityTask(closestFacilityService);
+        var closestFacilityTask = new ClosestFacilityTask(this.config.closestFacilityService);
 
         // add the facilities (depots)
         var facilities = new FeatureSet();
@@ -327,7 +334,7 @@ function(declare, BaseWidget,
         }
         var allRoutes = [timaruRoute,christchurchRoute,amberleyRoute,kaikouraRoute]
 
-        eRoute = new RouteTask(routeService);
+        eRoute = new RouteTask(this.config.routeService);
         eParams = new RouteParams;
 
         eParams.outSpatialReference = sRef;
@@ -406,7 +413,7 @@ function(declare, BaseWidget,
     search: function() {
         toggle_visibility('addLoc','hide');
         // initalize the query for finding consents
-        var queryTask = new QueryTask(consentsLayer);
+        var queryTask = new QueryTask(this.config.consentsLayer);
         var query = new Query();
         query.returnGeometry = true;
         query.outSpatialReference = sRef;
@@ -446,7 +453,7 @@ function(declare, BaseWidget,
         toggle_visibility('addLoc','hide');
 
         // initalize the query for finding consents. 
-        var queryTask = new QueryTask(consentsLayer);
+        var queryTask = new QueryTask(this.config.consentsLayer);
         var query = new Query();
         query.returnGeometry = true;
         query.outSpatialReference = {wkid:2193}; 
@@ -527,7 +534,7 @@ function(declare, BaseWidget,
             consentLoc.features = consentLoclayer.graphics;
             toggle_visibility('current','show');
             i = currentConsents.length-1
-            document.getElementById("current").innerHTML = document.getElementById("current").innerHTML +'<p>'+ consentGeocoder.results[0].name +'<button id='+i+' data-dojo-attach-event="onclick:delete('+i+')">Delete</button></p>';
+            document.getElementById("current").innerHTML = document.getElementById("current").innerHTML +'<p>'+ consentGeocoder.results[0].name +'</p>';
         }
     },
 
@@ -635,7 +642,7 @@ function(declare, BaseWidget,
             this.map.addLayer(startEndlayer);
 
             // setup route parameters
-            var routeTask = new RouteTask(routeService);
+            var routeTask = new RouteTask(this.config.routeService);
             var routeParams = new RouteParams();
             routeParams.stops = new FeatureSet();
             routeParams.outSpatialReference = sRef;
@@ -679,7 +686,7 @@ function(declare, BaseWidget,
 
     return: function(){
         // sets up the URL to send back to the trip spliter
-        url = tripSpliterURL;
+        url = this.config.tripSpliterURL;
         get ='tripID='+tripSplitResult['tripID']+'&totalDist='+tripSplitResult['totalDist'];
         for (i in tripSplitResult['consents']){
             get = get +'&crc'+i+'='+tripSplitResult['consents'][i];
@@ -693,6 +700,12 @@ function(declare, BaseWidget,
     },
 
     startup: function(){
+
+        // layer to show start/end locations
+        startEndlayer = new GraphicsLayer();
+        startEndlayer.setRenderer(startEndRenderer);
+
+
         // On widget startup, detects any present consents in the URL
         if ((URLconsents.length > 0) && (URLconsents[0] !== undefined)){
             toggle_visibility('CRC Search', 'hide');
@@ -714,10 +727,10 @@ function(declare, BaseWidget,
         depotGraphic = [];
 
         // add the locations to a layer
+        depotLocs =  this.config.depotLocs.split(';')
         for (i in depotLocs) {
-            var locator = new esri.tasks.Locator(geoCoder);
+            var locator = new esri.tasks.Locator(this.config.geoCoder);
             locator.outSpatialReference = sRef;
-            console.log(depotLocs[i]);
             var optionsFrom = {
                 address: { "SingleLine": depotLocs[i] },
                 outFields: ["Loc_name"]
@@ -725,8 +738,6 @@ function(declare, BaseWidget,
 
             locator.addressToLocations(optionsFrom,lang.hitch(this,function(candidate){
                 var r = candidate;
-                console.log(r[0].location.x);
-                console.log(r[0].location.y);
                 facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
                 depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
                 })); 
@@ -737,7 +748,7 @@ function(declare, BaseWidget,
         startGeocoder = new Geocoder({
             arcgisGeocoder: false,
             geocoders:[{
-                url: geoCoder,
+                url: this.config.geoCoder,
                 name: 'ECAN Geocoder',
                 singleLineFieldName: "SingleLine",
                 placeholder: 'Locate',
@@ -751,7 +762,7 @@ function(declare, BaseWidget,
         endGeocoder = new Geocoder({
             arcgisGeocoder: false,
             geocoders:[{
-                url: geoCoder,
+                url: this.config.geoCoder,
                 name: 'ECAN Geocoder',
                 singleLineFieldName: "SingleLine",
                 placeholder: 'Locate',
@@ -765,7 +776,7 @@ function(declare, BaseWidget,
         consentGeocoder = new Geocoder({
             arcgisGeocoder: false,
             geocoders:[{
-                url: geoCoder,
+                url: this.config.geoCoder,
                 name: 'ECAN Geocoder',
                 singleLineFieldName: "SingleLine",
                 placeholder: 'Locate',
