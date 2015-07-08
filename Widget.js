@@ -62,7 +62,9 @@ QueryString = function () {
     var pair = vars[i].split("=");
         // If first entry with this name
     if (typeof query_string[pair[0]] === "undefined") {
-      query_string[pair[0]] = pair[1];
+        if ((pair[0] === 'tripID') || (pair[0].indexOf('crc') > -1)){
+            query_string[pair[0]] = pair[1];
+        }      
         // If second entry with this name
     } else if (typeof query_string[pair[0]] === "string") {
       var arr = [ query_string[pair[0]], pair[1] ];
@@ -115,7 +117,8 @@ function(declare, BaseWidget,
                         "totalDist":0,
                         "consents":[],
                         "closestDepot":[],
-                        "depotDist":[]
+                        "depotDist":[],
+                        "excess":[]
                       };
 
     URLconsents = [];
@@ -360,10 +363,12 @@ function(declare, BaseWidget,
         eParams.preserveFirstStop = true;
         eParams.preserveLastStop = true;
         eParams.useHierarchy = true;
-
+        slop = 0
         eRoute.on('solve-complete',function(evt){
             var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
-            document.getElementById('temp').innerHTML = document.getElementById('temp').innerHTML + totalDist;
+            slop = slop + Number(totalDist);
+            tripSplitResult['excess']=slop;
+            document.getElementById("excess").innerHTML = '<p>Chargeable Distance is ' + slop +'km.</p>'
         });
 
         for (i in allRoutes){
@@ -420,6 +425,8 @@ function(declare, BaseWidget,
                 }
             }
         }
+
+
     },
 
     search: function() {
@@ -518,7 +525,7 @@ function(declare, BaseWidget,
         }
         toggle_visibility('current','show');
         document.getElementById("current").innerHTML = document.getElementById("current").innerHTML + string; 
-        // this.map.addLayer(consentLoclayer);
+        this.map.addLayer(consentLoclayer);
 
         if (consentLocattr.length >= numConsent){
             toggle_visibility('currentloading','hide');
@@ -576,7 +583,8 @@ function(declare, BaseWidget,
         endLoc = [];
         document.getElementById("routeResult").innerHTML = '';
         document.getElementById("results").innerHTML = '';
-        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[]};
+        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"excess":[]
+    };
     },
 
     route: function(){
@@ -680,7 +688,7 @@ function(declare, BaseWidget,
                 var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
                 tripSplitResult['totalDist'] = totalDist;
 
-                document.getElementById("routeResult").innerHTML = "Total Distance is "+totalDist+"kms.";
+                document.getElementById("routeResult").innerHTML = "<p>Total Distance is "+totalDist+"kms.</p>";
 
                 var route = evt.result.routeResults[0].route.setSymbol(routeSymbol);
                 this.map.graphics.add(route);
@@ -704,6 +712,7 @@ function(declare, BaseWidget,
             get = get +'&crcDepot'+i+'='+tripSplitResult['closestDepot'][i];
             get = get +'&crcDepotDist'+i+'='+tripSplitResult['depotDist'][i];
         }
+        get = get +'&excess='+tripSplitResult['excess'];
         url = url+get;
         var win = window.open(url, '_blank');
         win.focus();
