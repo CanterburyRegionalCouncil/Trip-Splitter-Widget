@@ -1,12 +1,12 @@
 // Written By Hamish Kingsbury (Interpret Geospatial Solutions) for Environment Canterbury. This widget
 // is to be used in conjunction with Web App Builder.
 
-var depotLocs = [
-    [1460349.4084,5082561.0188], // Timaru
-    [1558900.7229,5167823.4527], // Christchurch
-    [1577887.9281,5222124.0212], // Amberley
-    [1655889.3952,5306371.3995]  // Kaikoura
-]
+// var depotLocs = [
+//     [1460349.4084,5082561.0188], // Timaru
+//     [1558900.7229,5167823.4527], // Christchurch
+//     [1577887.9281,5222124.0212], // Amberley
+//     [1655889.3952,5306371.3995]  // Kaikoura
+// ]
 
 
 // allows for the easy toggling of div tags
@@ -59,7 +59,9 @@ define(['dojo/_base/declare', 'jimu/BaseWidget',
 
     "dojo/_base/lang","dojo/promise/all","dojo/dom-construct",
 
-    "esri/dijit/Geocoder"],
+    "esri/dijit/Geocoder",
+
+    "dojo/_base/array"],
 
 function(declare, BaseWidget,
 
@@ -76,7 +78,9 @@ function(declare, BaseWidget,
 
     lang, all, domConstruct,
 
-    Geocoder) {
+    Geocoder,
+
+    array) {
 
 
     // This holds the results and is sent back to the trip spliter
@@ -687,6 +691,16 @@ function(declare, BaseWidget,
 
         // var locator = new esri.tasks.Locator(this.config.geoCoder);
         // locator.outSpatialReference = sRef;
+        var locs = this.config.depotLocs.split(';')
+        depotLocs = []
+        for (i in locs){
+            l=[]
+            for (j in locs[i].split(',')){
+                l.push(parseFloat(locs[i].split(',')[j]))
+            }
+            depotLocs.push(l)
+        }
+        console.log(depotLocs)
 
 
         for (i in depotLocs) {
