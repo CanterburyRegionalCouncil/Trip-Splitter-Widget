@@ -1,22 +1,6 @@
 // Written By Hamish Kingsbury (Interpret Geospatial Solutions) for Environment Canterbury. This widget
 // is to be used in conjunction with Web App Builder.
 
-//////////////////////////////////////////////////////
-// Below are variables that might need to be changed//
-//////////////////////////////////////////////////////
-
-// REST enpoint of route services
-// var closestFacilityService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Closest%20Facility';
-// var routeService = 'http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route';
-
-// // X/Y Locations of Depots.
-// var depotLocs = [
-//     '73 Church Street, Timaru', // Timaru
-//     '22 Edward Street, Lincoln', // Christchurch
-//     '5 Markham Street, Amberley', // Amberley
-//     '73 Beach Road, Kaikoura'  // Kaikoura
-// ];
-
 var depotLocs = [
     [1460349.4084,5082561.0188], // Timaru
     [1558900.7229,5167823.4527], // Christchurch
@@ -24,22 +8,6 @@ var depotLocs = [
     [1655889.3952,5306371.3995]  // Kaikoura
 ]
 
-
-// // REST endpoint of consents
-// var consentsLayer = "http://gis.ecan.govt.nz/arcgis/rest/services/Public/Resource_Consents/MapServer/0";
-
-// // Address geocode
-// var geoCoder = "http://gis.ecan.govt.nz/arcgis/rest/services/Locators/Canterbury_Composite_Locator/GeocodeServer";
-
-// // Return Address to get back to the trip splitter
-// var tripSpliterURL = "/webappbuilder/apps/4//form/result.html?";
-// // var tripSpliterURL = "../webapp/form/result.html?";
-
-//////////////////////////////////////////////////
-//        End of changable variables.           //
-// Below is the code used to build and configure//
-//                 the widget.                  //
-//////////////////////////////////////////////////
 
 // allows for the easy toggling of div tags
 function toggle_visibility(id, display) {
@@ -480,19 +448,10 @@ function(declare, BaseWidget,
         function consentDelete() {
             console.info(evt.target.id);
         }
-
         for (i in consentLocattr){
             string = '<div id="consent'+i+'"><p>' + consentLocattr[i][1] + '</p></div>';
-            // string = '<div id="consent'+i+'"><p>' + consentLocattr[i][1] + '<button data-dojo-attach-event="onclick:delete">Delete</button></p></div>';
-            // string = '<div id="consent'+i+'"><p>' + consentLocattr[i][1] + '</p></div>';
             currentConsents.push(consentLocattr[i][1]);
-            // var d=dojo.byId('consent'+i)
-            // var button = new dijit.form.Button({
-            //     id: "progButtonNode"+i,
-            //     label: "Click me!"+i,
-            //     onClick: this.delete()
-            // }, d);
-        }
+
         toggle_visibility('current','show');
         document.getElementById("current").innerHTML = document.getElementById("current").innerHTML + string; 
         this.map.addLayer(consentLoclayer);
@@ -500,16 +459,7 @@ function(declare, BaseWidget,
         if (consentLocattr.length >= numConsent){
             toggle_visibility('currentloading','hide');
         }
-
-
     },
-
-    // delete: function(evt){
-    //     // console.info(evt.target.id); 
-    //     console.info(evt.target.id);  
-    //     // _viewerMap._layers.graphicsLayer1.remove(_viewerMap._layers.graphicsLayer1[0])
-
-    // },
 
     location: function(){
         if (consentGeocoder.results[0] === undefined){
