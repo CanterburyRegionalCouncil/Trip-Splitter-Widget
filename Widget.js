@@ -448,10 +448,12 @@ function(declare, BaseWidget,
         function consentDelete() {
             console.info(evt.target.id);
         }
+
         for (i in consentLocattr){
             string = '<div id="consent'+i+'"><p>' + consentLocattr[i][1] + '</p></div>';
             currentConsents.push(consentLocattr[i][1]);
 
+        }
         toggle_visibility('current','show');
         document.getElementById("current").innerHTML = document.getElementById("current").innerHTML + string; 
         this.map.addLayer(consentLoclayer);
@@ -460,6 +462,7 @@ function(declare, BaseWidget,
             toggle_visibility('currentloading','hide');
         }
     },
+
 
     location: function(){
         if (consentGeocoder.results[0] === undefined){
