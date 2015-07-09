@@ -1,13 +1,5 @@
 // Written By Hamish Kingsbury (Interpret Geospatial Solutions) for Environment Canterbury. This widget
-// is to be used in conjunction with Web App Builder.
-
-// var depotLocs = [
-//     [1460349.4084,5082561.0188], // Timaru
-//     [1558900.7229,5167823.4527], // Christchurch
-//     [1577887.9281,5222124.0212], // Amberley
-//     [1655889.3952,5306371.3995]  // Kaikoura
-// ]
-
+// is to be used in conjunction with ESRIs Web App Builder.
 
 // allows for the easy toggling of div tags
 function toggle_visibility(id, display) {
@@ -29,7 +21,7 @@ QueryString = function () {
     var pair = vars[i].split("=");
         // If first entry with this name
     if (typeof query_string[pair[0]] === "undefined") {
-        if ((pair[0] === 'tripID') || (pair[0].indexOf('crc') > -1)){
+        if ((pair[0] === 'tripID') || (pair[0].indexOf('crc') > -1) || (pair[0].indexOf('CRC')> -1)){
             query_string[pair[0]] = pair[1];
         }      
         // If second entry with this name
@@ -277,16 +269,12 @@ function(declare, BaseWidget,
                 try{ // will halt if it doesnt find an index (i.e. no consent)
                     for (j in consents[i]){
                         if (i == 0){
-                            // console.log('Timaru' + consentLocattr[consents[i][j][0]])
                             timaruRoute.push(consentLocattr[consents[i][j][0]][2])
                         } else if(i == 1){
-                            // console.log('Christchurch' + consentLocattr[consents[i][j][0]])
                             christchurchRoute.push(consentLocattr[consents[i][j][0]][2])
                         } else if(i == 2){
-                            // console.log('Amberley' + consentLocattr[consents[i][j][0]])
                             amberleyRoute.push(consentLocattr[consents[i][j][0]][2])
                         } else {
-                            // console.log('Kaikoura' + consentLocattr[consents[i][j][0]])
                             kaikouraRoute.push(consentLocattr[consents[i][j][0]][2])
                         }
                     }
@@ -648,17 +636,7 @@ function(declare, BaseWidget,
         win.focus();
     },
 
-    solve: function(optionsFrom, locator){
-        locator.addressToLocations(optionsFrom,function(candidate){
-            var r = candidate;
-            facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-            depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-            console.log(i)
 
-            console.log(r[0].location.x)
-            console.log(r[0].location.y)
-            });
-    },
     startup: function(){
 
         // layer to show start/end locations
@@ -687,10 +665,15 @@ function(declare, BaseWidget,
         depotGraphic = [];
 
         // add the locations to a layer
-        // depotLocs =  this.config.depotLocs.split(';')
+        // var depotLocs= ["73 Church Street, Timaru","22 Edward Street, Lincoln", "5 Markham Street, Amberley", "73 Beach Road, Kaikoura"];
+        // test = []
+        // for (i in depotLocs){
+        //                 setTimeout(lang.hitch(this,function(){
+        //     test.push = this.depotAddress(depotLocs[i])
+        //             }),1000)
+        // }
+        // console.log(test)
 
-        // var locator = new esri.tasks.Locator(this.config.geoCoder);
-        // locator.outSpatialReference = sRef;
         var locs = this.config.depotLocs.split(';')
         depotLocs = []
         for (i in locs){
@@ -700,22 +683,23 @@ function(declare, BaseWidget,
             }
             depotLocs.push(l)
         }
-        console.log(depotLocs)
+        // depotLocs = ["73 Church Street, Timaru","22 Edward Street, Lincoln","5 Markham Street, Amberley","73 Beach Road, Kaikoura"]
 
-
-        for (i in depotLocs) {
-            // var locator = new esri.tasks.Locator(this.config.geoCoder);
-            // locator.outSpatialReference = sRef;
-            // var optionsFrom = {
-            //     address: { "SingleLine": depotLocs[i] },
-            //     outFields: ["Loc_name"]
-            // };
+        // for (i in depotLocs) {  
+        //             // var locator = new esri.tasks.Locator(this.config.geoCoder);
+        //     // locator.outSpatialReference = sRef;
+        //     // var optionsFrom = {
+        //     //     address: { "SingleLine": depotLocs[i] },
+        //     //     outFields: ["Loc_name"]
+        //     // };
            
-            // locator.addressToLocations(optionsFrom,function(candidate){
-            //     var r = candidate;
-            //     facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-            //     depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-            //     });             
+        //     // locator.addressToLocations(optionsFrom,function(candidate){
+        //     //     var r = candidate;
+        //     //     facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+        //     //     depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+        //     //     });   
+
+        for (i in depotLocs) {          
             depotGraphic.push(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
             facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
         }
