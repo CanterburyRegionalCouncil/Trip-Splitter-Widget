@@ -472,7 +472,7 @@ function(declare, BaseWidget,
             consentLoclayer.add(new Graphic(new Point(consentGeocoder.results[0].feature.geometry.x,consentGeocoder.results[0].feature.geometry.y,sRef)));
             this.map.addLayer(consentLoclayer);
             currentConsents.push(consentGeocoder.results[0].name);
-            consentLocattr.push([(consentLoclayer.graphics.length-1),consentGeocoder.results[0].name]);
+            consentLocattr.push([(consentLoclayer.graphics.length-1),consentGeocoder.results[0].name,(new Graphic(new Point(consentGeocoder.results[0].feature.geometry.x,consentGeocoder.results[0].feature.geometry.y,sRef)))]);
             consentLoc.features = consentLoclayer.graphics;
             toggle_visibility('current','show');
             i = currentConsents.length-1
