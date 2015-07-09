@@ -85,7 +85,7 @@ function(declare, BaseWidget,
                         "consents":[],
                         "closestDepot":[],
                         "depotDist":[],
-                        "excess":[]
+                        "chargeable":[]
                       };
 
     URLconsents = [];
@@ -305,8 +305,8 @@ function(declare, BaseWidget,
         eRoute.on('solve-complete',function(evt){
             var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
             slop = slop + Number(totalDist);
-            tripSplitResult['excess']=slop;
-            document.getElementById("excess").innerHTML = '<p>Chargeable Distance is ' + slop +'km.</p>'
+            tripSplitResult['chargeable']=slop;
+            document.getElementById("chargeable").innerHTML = '<p>Chargeable Distance is ' + slop +'km.</p>'
         });
 
         for (i in allRoutes){
@@ -506,8 +506,8 @@ function(declare, BaseWidget,
         endLoc = [];
         document.getElementById("routeResult").innerHTML = '';
         document.getElementById("results").innerHTML = '';
-        document.getElementById("excess").innerHTML = '';
-        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"excess":[]
+        document.getElementById("chargeable").innerHTML = '';
+        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"chargeable":[]
     };
     },
 
@@ -638,7 +638,7 @@ function(declare, BaseWidget,
             get = get +'&crcDepot'+i+'='+tripSplitResult['closestDepot'][i];
             get = get +'&crcDepotDist'+i+'='+tripSplitResult['depotDist'][i];
         }
-        get = get +'&excess='+tripSplitResult['excess'];
+        get = get +'&chargeable='+tripSplitResult['chargeable'];
         url = url+get;
         var win = window.open(url, '_blank');
         win.focus();
