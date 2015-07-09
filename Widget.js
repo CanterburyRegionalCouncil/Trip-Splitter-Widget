@@ -506,6 +506,7 @@ function(declare, BaseWidget,
         endLoc = [];
         document.getElementById("routeResult").innerHTML = '';
         document.getElementById("results").innerHTML = '';
+        document.getElementById("excess").innerHTML = '';
         tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"excess":[]
     };
     },
@@ -552,35 +553,37 @@ function(declare, BaseWidget,
 
             if (document.getElementById('startSelect').value !== 'default'){
                 if (document.getElementById('startSelect').value === 'Timaru'){
-                    var startLoc = depotGraphic[0];
+                    var startLoc = [depotGraphic[0].geometry.x,depotGraphic[0].geometry.y];
                 } else if (document.getElementById('startSelect').value === 'Christchurch'){
-                    var startLoc = depotGraphic[1];
+                    var startLoc = [depotGraphic[1].geometry.x,depotGraphic[1].geometry.y];
                 } else if (document.getElementById('startSelect').value === 'Amberley'){
-                    var startLoc = depotGraphic[2];
+                    var startLoc = [depotGraphic[2].geometry.x,depotGraphic[2].geometry.y];
                 } else {
-                    var startLoc = depotGraphic[3];
+                    var startLoc = [depotGraphic[3].geometry.x,depotGraphic[3].geometry.y]
                 }
             } else {
                 var startLoc = [startGeocoder.results[0].feature.geometry.x,startGeocoder.results[0].feature.geometry.y];
+                
             }
 
             if (document.getElementById('endSelect').value !== 'default'){
                 if (document.getElementById('endSelect').value === 'Timaru'){
-                    var endLoc = depotGraphic[0];
+                    var endLoc = [depotGraphic[0].geometry.x,depotGraphic[0].geometry.y];
                 } else if (document.getElementById('endSelect').value === 'Christchurch'){
-                    var endLoc = depotGraphic[1];
+                    var endLoc = [depotGraphic[1].geometry.x,depotGraphic[1].geometry.y];
                 } else if (document.getElementById('endSelect').value === 'Amberley'){
-                    var endLoc = depotGraphic[2];
+                    var endLoc = [depotGraphic[2].geometry.x,depotGraphic[2].geometry.y];
                 } else {
-                   var endLoc = depotGraphic[3]
+                   var endLoc = [depotGraphic[3].geometry.x,depotGraphic[3].geometry.y];
                 }
             } else {
                 var endLoc = [endGeocoder.results[0].feature.geometry.x,endGeocoder.results[0].feature.geometry.y];
+                
             }
 
             // add geocoded locations to layer (start/end)
-            startEndlayer.add(new Graphic(new Point(startLoc.geometry.x,startLoc.geometry.y,sRef)));
-            startEndlayer.add(new Graphic(new Point(endLoc.geometry.x,endLoc.geometry.y,sRef)));
+            startEndlayer.add(new Graphic(new Point(startLoc[0],startLoc[1],sRef)));
+            startEndlayer.add(new Graphic(new Point(endLoc[0],endLoc[1],sRef)));
             this.map.addLayer(startEndlayer);
 
             // setup route parameters
