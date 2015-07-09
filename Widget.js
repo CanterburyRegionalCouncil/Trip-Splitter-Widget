@@ -17,12 +17,12 @@
 //     '73 Beach Road, Kaikoura'  // Kaikoura
 // ];
 
-// // var depotLocs = [
-// //     [1460349.4084,5082561.0188], // Timaru
-// //     [1558900.7229,5167823.4527], // Christchurch
-// //     [1577887.9281,5222124.0212], // Amberley
-// //     [1655889.3952,5306371.3995]  // Kaikoura
-// // ]
+var depotLocs = [
+    [1460349.4084,5082561.0188], // Timaru
+    [1558900.7229,5167823.4527], // Christchurch
+    [1577887.9281,5222124.0212], // Amberley
+    [1655889.3952,5306371.3995]  // Kaikoura
+]
 
 
 // // REST endpoint of consents
@@ -186,17 +186,7 @@ function(declare, BaseWidget,
     //methods to communication with app container:
     postCreate: function() {
         this.inherited(arguments);
-        alert(this.config.widgetName)
-
         console.log('Calculate::postCreate');
-            // variables from config
-    // closestFacilityService = this.config.closestFacilityService;
-    // routeService = this.config.routeService;
-    // depotLocs = this.config.depotLocs;
-    // consentsLayer = this.config.consentsLayer;
-    // geoCoder = this.config.geoCoder;
-    // tripSpliterURL = this.config.tripSpliterURL;
-
     },
 
 // This function works out which depot is the closest for each point
@@ -240,11 +230,11 @@ function(declare, BaseWidget,
 
             // transcode id to string of depot
             function depot(number){
-                if (number === '1'){
+                if (number == '1'){
                     return 'Timaru';
-                } else if (number === '2'){
+                } else if (number == '2'){
                     return 'Christchurch';
-                } else if (number === '3'){
+                } else if (number == '3'){
                     return 'Amberley';
                 } else {
                     return 'Kaikoura';
@@ -282,14 +272,13 @@ function(declare, BaseWidget,
                     kaikouraDepot.push([((results.routeName.split(' ')[1])-1),CRCid((results.routeName.split(' ')[1])-1)])
                 }
                 
-                string("Consent Number ");
+                string("<p>Consent Number ");
                 string(CRCid((results.routeName.split(' ')[1])-1));
                 string(" is ");
                 string(((Math.round(results.totalLength*100))/100).toFixed(1));
                 string("km (oneway) from the ");
                 string(depot(results.routeName.split(' ')[4]));
-                string(" depot.");
-                string( "<br>");
+                string(" depot.</p>");
                 tripSplitResult['consents'].push(CRCid((results.routeName.split(' ')[1])-1));
                 tripSplitResult['closestDepot'].push(depot(results.routeName.split(' ')[4]));
                 tripSplitResult['depotDist'].push(((Math.round(results.totalLength*100))/100).toFixed(1));
@@ -699,6 +688,17 @@ function(declare, BaseWidget,
         win.focus();
     },
 
+    solve: function(optionsFrom, locator){
+        locator.addressToLocations(optionsFrom,function(candidate){
+            var r = candidate;
+            facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+            depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+            console.log(i)
+
+            console.log(r[0].location.x)
+            console.log(r[0].location.y)
+            });
+    },
     startup: function(){
 
         // layer to show start/end locations
@@ -719,7 +719,7 @@ function(declare, BaseWidget,
         // setup the three different geocoders. One for start locations
         // one for end locations and the last ass an alternative for entering a consent
 
-                // hard code the four depot locations
+        // hard code the four depot locations
         facilitiesGraphicsLayer = new GraphicsLayer();
         facilitiesGraphicsLayer.setRenderer(Renderer);
 
@@ -727,22 +727,27 @@ function(declare, BaseWidget,
         depotGraphic = [];
 
         // add the locations to a layer
-        depotLocs =  this.config.depotLocs.split(';')
-        for (i in depotLocs) {
-            var locator = new esri.tasks.Locator(this.config.geoCoder);
-            locator.outSpatialReference = sRef;
-            var optionsFrom = {
-                address: { "SingleLine": depotLocs[i] },
-                outFields: ["Loc_name"]
-            };
+        // depotLocs =  this.config.depotLocs.split(';')
 
-            locator.addressToLocations(optionsFrom,lang.hitch(this,function(candidate){
-                var r = candidate;
-                facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-                depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
-                })); 
-        // depotGraphic.push(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
-        // facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
+        // var locator = new esri.tasks.Locator(this.config.geoCoder);
+        // locator.outSpatialReference = sRef;
+
+
+        for (i in depotLocs) {
+            // var locator = new esri.tasks.Locator(this.config.geoCoder);
+            // locator.outSpatialReference = sRef;
+            // var optionsFrom = {
+            //     address: { "SingleLine": depotLocs[i] },
+            //     outFields: ["Loc_name"]
+            // };
+           
+            // locator.addressToLocations(optionsFrom,function(candidate){
+            //     var r = candidate;
+            //     facilitiesGraphicsLayer.add(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+            //     depotGraphic.push(new Graphic(new Point(r[0].location.x,r[0].location.y,sRef)));
+            //     });             
+            depotGraphic.push(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
+            facilitiesGraphicsLayer.add(new Graphic(new Point(depotLocs[i][0],depotLocs[i][1],sRef)));
         }
 
         startGeocoder = new Geocoder({
