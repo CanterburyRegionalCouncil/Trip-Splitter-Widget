@@ -460,15 +460,15 @@ function(declare, BaseWidget,
         if (consentGeocoder.results[0] === undefined){
             alert('Please Enter an Address');
         } else {
-            this.map.centerAndZoom(new Point(consentGeocoder.results[0].feature.geometry.x,consentGeocoder.results[0].feature.geometry.y,sRef),11);
-            consentLoclayer.add(new Graphic(new Point(consentGeocoder.results[0].feature.geometry.x,consentGeocoder.results[0].feature.geometry.y,sRef)));
+            this.map.centerAndZoom(new Point(consentSearchLoc[0].feature.geometry.x,consentSearchLoc[0].feature.geometry.y,sRef),11);
+            consentLoclayer.add(new Graphic(new Point(consentSearchLoc[0].feature.geometry.x,consentSearchLoc[0].feature.geometry.y,sRef)));
             this.map.addLayer(consentLoclayer);
-            currentConsents.push(consentGeocoder.results[0].name);
-            consentLocattr.push([(consentLoclayer.graphics.length-1),consentGeocoder.results[0].name,(new Graphic(new Point(consentGeocoder.results[0].feature.geometry.x,consentGeocoder.results[0].feature.geometry.y,sRef)))]);
+            currentConsents.push(consentSearchLoc[0].name);
+            consentLocattr.push([(consentLoclayer.graphics.length-1),consentSearchLoc[0].name,(new Graphic(new Point(consentSearchLoc[0].feature.geometry.x,consentSearchLoc[0].feature.geometry.y,sRef)))]);
             consentLoc.features = consentLoclayer.graphics;
             toggle_visibility('current','show');
             i = currentConsents.length-1
-            document.getElementById("current").innerHTML = document.getElementById("current").innerHTML +'<p>'+ consentGeocoder.results[0].name +'</p>';
+            document.getElementById("current").innerHTML = document.getElementById("current").innerHTML +'<p>'+ consentSearchLoc[0].name +'</p>';
         }
     },
 
@@ -504,6 +504,7 @@ function(declare, BaseWidget,
     },
 
     route: function(){
+        error = false
         try {
             _viewerMap._layers.graphicsLayer2.clear();
         } catch(e){}
@@ -516,6 +517,7 @@ function(declare, BaseWidget,
         }
         if((startGeocoder.results.length !== 0) && (document.getElementById("startSelect").value !== 'default')){
             alert('Please enter one location or depot to start at.')
+            error = true
         }
         if((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === 'default')){
             toggle_visibility('endError','show')
@@ -525,13 +527,14 @@ function(declare, BaseWidget,
         }
         if((endGeocoder.results.length !== 0) && (document.getElementById("endSelect").value !== 'default')){
             alert('Please enter one location or depot to end at.')
+            error = true
         }
-
         // if no start/end or consent location is found, alert the user
         if (currentConsents.length === 0 || ((startGeocoder.results.length === 0) && (document.getElementById("startSelect").value === 'default')) || ((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === 'default'))){
             alert('Please make sure you have entered a Start and End location as well as one or more consents')
-        }
-        else{
+        } else if (error === true){
+
+        } else{
             toggle_visibility('endError','hide')
             toggle_visibility('startError','hide')
             toggle_visibility('calcloading','show');
@@ -554,7 +557,7 @@ function(declare, BaseWidget,
                     var startLoc = [depotGraphic[3].geometry.x,depotGraphic[3].geometry.y]
                 }
             } else {
-                var startLoc = [startGeocoder.results[0].feature.geometry.x,startGeocoder.results[0].feature.geometry.y];
+                var startLoc = [startSearchLoc[0],startSearchLoc[1]];
                 
             }
 
@@ -569,7 +572,7 @@ function(declare, BaseWidget,
                    var endLoc = [depotGraphic[3].geometry.x,depotGraphic[3].geometry.y];
                 }
             } else {
-                var endLoc = [endGeocoder.results[0].feature.geometry.x,endGeocoder.results[0].feature.geometry.y];
+                var endLoc = [endSearchLoc[0],endSearchLoc[1]];
                 
             }
 
@@ -718,6 +721,10 @@ function(declare, BaseWidget,
             map: this.map,
         }, document.getElementById('startSearch'));
 
+        startGeocoder.on('select',function(evt){
+            startSearchLoc =[evt.result.feature.geometry.x,evt.result.feature.geometry.y]
+        })
+
         endGeocoder = new Geocoder({
             arcgisGeocoder: false,
             geocoders:[{
@@ -732,6 +739,10 @@ function(declare, BaseWidget,
             map: this.map,
         }, document.getElementById('endSearch'));
 
+        endGeocoder.on('select',function(evt){
+            endSearchLoc =[evt.result.feature.geometry.x,evt.result.feature.geometry.y]
+        })
+
         consentGeocoder = new Geocoder({
             arcgisGeocoder: false,
             geocoders:[{
@@ -745,6 +756,10 @@ function(declare, BaseWidget,
             autoNavigate: false,
             map: this.map,
         }, document.getElementById('consentSearch'));
+
+        consentGeocoder.on('select',function(evt){
+            consentSearchLoc =[evt.result,evt.result]
+        })
 
         consentGeocoder.startup();
         startGeocoder.startup();
