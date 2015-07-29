@@ -331,6 +331,7 @@ function(declare, BaseWidget,
                     eParams.stops.features = stops;
                     eRoute.solve(eParams);
                 } else if (i == 2){ // Amberbley
+                    eParams.stops = new FeatureSet();
                     stops = []
                     //start
                     stops.push(depotGraphic[2])
@@ -342,6 +343,7 @@ function(declare, BaseWidget,
                     eParams.stops.features = stops;
                     eRoute.solve(eParams);
                 } else {
+                    eParams.stops = new FeatureSet();
                     stops = []
                     //start
                     stops.push(depotGraphic[3])
@@ -363,7 +365,7 @@ function(declare, BaseWidget,
         toggle_visibility('addLoc','hide');
         // initalize the query for finding consents
         var queryTask = new QueryTask(this.config.consentsLayer);
-        var query = new Query();
+        query = new Query();
         query.returnGeometry = true;
         query.outSpatialReference = sRef;
         query.outFields = ["ConsentNo","ActivityText","Location"];
@@ -482,7 +484,8 @@ function(declare, BaseWidget,
             consentLocattr = [];
             consentLoc = new FeatureSet();
             currentConsents = [];
-            document.getElementById("current").innerHTML = '';
+            document.getElementById("current").innerHTML = '<h2>Current Locations</h2>';
+            toggle_visibility('current','hide');
             document.getElementById("info").innerHTML = '';
             toggle_visibility('addLoc','hide');
             document.getElementById("searchText").value = 'CRC';
