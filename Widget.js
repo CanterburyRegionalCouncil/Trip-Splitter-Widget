@@ -12,6 +12,58 @@ function toggle_visibility(id, display) {
     else{}
 };
 
+function configureDropDownLists(ddl1,ddl2) {
+    var e = new Array('','Timaru','Christchurch','Amberley','Kaikoura')
+    var t = new Array('Timaru','','Christchurch','Amberley','Kaikoura')
+    var c = new Array('Christchurch','','Timaru','Amberley','Kaikoura')
+    var a = new Array('Amberley','','Timaru','Christchurch','Kaikoura')
+    var k = new Array('Kaikoura','','Timaru','Christchurch','Amberley')
+
+    switch (ddl1.value) {
+        case '':
+            ddl2.options.length = 0;
+            for (i = 0; i < e.length; i++) {
+                createOption(ddl2, e[i], e[i]);
+            }
+            break;
+        case 'Timaru':
+            ddl2.options.length = 0;
+            for (i = 0; i < t.length; i++) {
+                createOption(ddl2, t[i], t[i]);
+            }
+            break;
+        case 'Christchurch':
+            ddl2.options.length = 0; 
+            for (i = 0; i < c.length; i++) {
+                createOption(ddl2, c[i], c[i]);
+            }
+            break;
+        case 'Amberley':
+            ddl2.options.length = 0;
+            for (i = 0; i < a.length; i++) {
+                createOption(ddl2, a[i], a[i]);
+            }
+            break;
+        case 'Kaikoura':
+            ddl2.options.length = 0;
+            for (i = 0; i < k.length; i++) {
+                createOption(ddl2, k[i], k[i]);
+            }
+            break;
+            default:
+                ddl2.options.length = 0;
+            break;
+    }
+
+}
+
+function createOption(ddl, text, value) {
+    var opt = document.createElement('option');
+    opt.value = value;
+    opt.text = text;
+    ddl.options.add(opt);
+}
+
 // gets the parameters from the URL
 QueryString = function () {
   var query_string = {};
@@ -484,7 +536,7 @@ function(declare, BaseWidget,
             consentLocattr = [];
             consentLoc = new FeatureSet();
             currentConsents = [];
-            document.getElementById("current").innerHTML = '<h2>Current Locations</h2>';
+            document.getElementById("current").innerHTML = '';
             toggle_visibility('current','hide');
             document.getElementById("info").innerHTML = '';
             toggle_visibility('addLoc','hide');
@@ -512,28 +564,28 @@ function(declare, BaseWidget,
             _viewerMap._layers.graphicsLayer2.clear();
         } catch(e){}
 
-        if((startGeocoder.results.length === 0) && (document.getElementById("startSelect").value === 'default')){
+        if((startGeocoder.results.length === 0) && (document.getElementById("startSelect").value === '')){
             toggle_visibility('startError','show')
         } 
-        if((startGeocoder.results.length !== 0) && (document.getElementById("startSelect").value === 'default')){
+        if((startGeocoder.results.length !== 0) && (document.getElementById("startSelect").value === '')){
             toggle_visibility('startError','hide')
         }
-        if((startGeocoder.results.length !== 0) && (document.getElementById("startSelect").value !== 'default')){
+        if((startGeocoder.results.length !== 0) && (document.getElementById("startSelect").value !== '')){
             alert('Please enter one location or depot to start at.')
             error = true
         }
-        if((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === 'default')){
+        if((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === '')){
             toggle_visibility('endError','show')
         } 
-        if((endGeocoder.results.length !== 0) && (document.getElementById("endSelect").value === 'default')){
+        if((endGeocoder.results.length !== 0) && (document.getElementById("endSelect").value === '')){
             toggle_visibility('endError','hide')
         }
-        if((endGeocoder.results.length !== 0) && (document.getElementById("endSelect").value !== 'default')){
+        if((endGeocoder.results.length !== 0) && (document.getElementById("endSelect").value !== '')){
             alert('Please enter one location or depot to end at.')
             error = true
         }
         // if no start/end or consent location is found, alert the user
-        if (currentConsents.length === 0 || ((startGeocoder.results.length === 0) && (document.getElementById("startSelect").value === 'default')) || ((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === 'default'))){
+        if (currentConsents.length === 0 || ((startGeocoder.results.length === 0) && (document.getElementById("startSelect").value === '')) || ((endGeocoder.results.length === 0) && (document.getElementById("endSelect").value === ''))){
             alert('Please make sure you have entered a Start and End location as well as one or more consents')
         } else if (error === true){
 
@@ -549,7 +601,7 @@ function(declare, BaseWidget,
             // calculate the closest depots
             this.closest();
 
-            if (document.getElementById('startSelect').value !== 'default'){
+            if (document.getElementById('startSelect').value !== ''){
                 if (document.getElementById('startSelect').value === 'Timaru'){
                     var startLoc = [depotGraphic[0].geometry.x,depotGraphic[0].geometry.y];
                 } else if (document.getElementById('startSelect').value === 'Christchurch'){
@@ -564,7 +616,7 @@ function(declare, BaseWidget,
                 
             }
 
-            if (document.getElementById('endSelect').value !== 'default'){
+            if (document.getElementById('endSelect').value !== ''){
                 if (document.getElementById('endSelect').value === 'Timaru'){
                     var endLoc = [depotGraphic[0].geometry.x,depotGraphic[0].geometry.y];
                 } else if (document.getElementById('endSelect').value === 'Christchurch'){
@@ -651,8 +703,10 @@ function(declare, BaseWidget,
 
 
         // On widget startup, detects any present consents in the URL
+        toggle_visibility('returnButton', 'hide');
         if ((URLconsents.length > 0) && (URLconsents[0] !== undefined)){
-            toggle_visibility('CRC Search', 'hide');
+            toggle_visibility('CRCSearch', 'hide');
+            toggle_visibility('returnButton', 'show');
             for (i in URLconsents){
                 this.searchURL(URLconsents[i]);
             }
