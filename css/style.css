@@ -15,3 +15,33 @@
 #startError, #endError{
 	color: red;
 }
+
+h1 {
+	font-size: 14pt;
+	line-height: 18pt;
+	font-weight: bold;
+}
+
+h2{
+	font-size: 12pt;
+	line-height: 18pt;
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+h3{
+	font-size: 9pt;
+	line-height: 18pt;
+}
+
+body, div, dl, dt, dd, li, h1, h2, h3, h4, h5, h6{
+	margin: 0;
+}
+
+#CRCSearch, #consentSearch, #current, #start, #end {
+	padding-left:15px;
+}
+
+#addSearchLoc {
+	margin-left: 15px;
+}
