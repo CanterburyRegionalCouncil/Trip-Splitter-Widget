@@ -1,61 +1,74 @@
-
 <div>
-	<h3>${nls.widgetTitle}</h3>
-	<p>${nls.description}</p>
-	<h1>Step 1 - Find Consents or Addresses</h1>
-	<div id='CRC Search'>		
+	<h1>Step 1</h1>
+	<h2>Find Consents</h2>
+	<div id='CRCSearch'>		
 		<br>
 		<input type="text" id="searchText" value="CRC" />
+		<br>
+		<br>
 		<button data-dojo-attach-event="onclick:search">Find Consent</button>
-
-		<br>
 		<div id='info'></div>
-		<br>
 		<div id='addLoc' style="display:none">
-			<h4>Add Consent to map</h4>
-			<button id='addButton' data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add Consent</button>
+			<button id='addButton' data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add Consent to map</button>
+		</div>
+		<br>
+	</div>
+	<br>
+	<h2>or Addresses</h2>
+	<br>
+	<div id='consentSearch'></div>
+	<br>
+	<button id='addSearchLoc' data-dojo-attach-event="onclick:location">Add Location</button>
+	<br>
+	<br>
+	<h3>Current Locations:</h3>
+	<div id='current' style='display:none'>
+	</div>
+	<div id='currentloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
+	<br>
+	<br>
+	<div id = 'locations'>
+		<h1>Step 2</h1>	
+		<h2>Start Location: </h2>
+		<div id = 'start'>
+			<h3>Search or</h3>
+			<p>
+				<!-- <input type="text" id="fromTxf" value=""> -->
+				<div id='startSearch'></div>
+				<div id='startError' style='display:none'>Location not valid</div>
+				<!-- <button id="Start" data-dojo-attach-event="onclick:start">Add Start</button> -->
+			</p>
+			<br>
+			<h3>Use Depot Location</h3>
+			<select id="startSelect" onchange="configureDropDownLists(this,document.getElementById('endSelect'))">
+				<option value =""></option>
+				<option value="Timaru">Timaru</option>
+				<option value="Christchurch">Christchurch</option>
+				<option value="Amberley">Amberley</option>
+				<option value="Kaikoura">Kaikoura</option>
+			</select>
 		</div>
 		<br>
 		<br>
-		<div id='consentSearch'></div>
-		<button data-dojo-attach-event="onclick:location">Add Location</button>
-	</div>
-	<div id='current' style='display:none'><h2>Current Locations</h2></div>
-	<div id='currentloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
-	<div id = 'locations'>
-		<h1>Step 2 - Specify Start and End Locations</h1>	
-		<h2>Start Location: </h2>
-		<h4>Search or</h4>
-		<p>
-			<!-- <input type="text" id="fromTxf" value=""> -->
-			<div id='startSearch'></div>
-			<div id='startError' style='display:none'>Location not valid</div>
-			<!-- <button id="Start" data-dojo-attach-event="onclick:start">Add Start</button> -->
-		</p>
-		<h4>Use Depot Location</h4>
-		<select id="startSelect">
-			<option value ="default"></option>
-			<option value="Timaru">Timaru</option>
-			<option value="Christchurch">Christchurch</option>
-			<option value="Amberley">Amberley</option>
-			<option value="Kaikoura">Kaikoura</option>
-		</select>
 		<h2>End Location: </h2>
-		<h4>Search or</h4>
-		<p>
-			<!-- <input type="text" id="toTxf" value=""> -->
-			<div id='endSearch'></div>
-			<div id='endError' style='display:none'>Location not valid</div>
-			<!-- <button id="End" data-dojo-attach-event="onclick:end">Add End</button> -->
-		</p>
-		<h4>Use Depot Location</h4>
-		<select id="endSelect">
-			<option value ="default"></option>
-			<option value="Timaru">Timaru</option>
-			<option value="Christchurch">Christchurch</option>
-			<option value="Amberley">Amberley</option>
-			<option value="Kaikoura">Kaikoura</option>
-		</select>
+		<div id = 'end'>
+			<h3>Search or</h3>
+			<p>
+				<!-- <input type="text" id="toTxf" value=""> -->
+				<div id='endSearch'></div>
+				<div id='endError' style='display:none'>Location not valid</div>
+				<!-- <button id="End" data-dojo-attach-event="onclick:end">Add End</button> -->
+			</p>
+			<br>
+			<h3>Use Depot Location</h3>
+			<select id="endSelect">
+				<option value =""></option>
+				<option value="Timaru">Timaru</option>
+				<option value="Christchurch">Christchurch</option>
+				<option value="Amberley">Amberley</option>
+				<option value="Kaikoura">Kaikoura</option>
+			</select>
+		<div>
 	</div>
 	<br>
 	<button id='route' data-dojo-attach-event="onclick:route" >Route</button>
@@ -65,7 +78,9 @@
 	<div id="routeResult" display='none'></div>
 	<div id="chargeable" display='none'></div>
 	<br>
-	<button id='return' data-dojo-attach-event="onclick:return" disabled="true">Return to Trip Splitter</button>
+	<div id = 'returnButton'>
+		<button id='return' data-dojo-attach-event="onclick:return" disabled="true">Return to Trip Splitter</button>
+	</div>
 	<br>
 	<br>
 	<div id='calcloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
