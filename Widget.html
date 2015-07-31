@@ -1,26 +1,28 @@
 <div>
 	<h1>Step 1</h1>
-	<h2>Find Consents</h2>
-	<div id='CRCSearch'>		
-		<br>
-		<input type="text" id="searchText" value="CRC" />
-		<br>
-		<br>
-		<button data-dojo-attach-event="onclick:search">Find Consent</button>
-		<div id='info'></div>
-		<div id='addLoc' style="display:none">
-			<button id='addButton' data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add Consent to map</button>
+	<div id = 'find'>
+		<h2>Find Consents</h2>
+		<div id='CRCSearch'>		
+			<br>
+			<input type="text" id="searchText" value="CRC" />
+			<br>
+			<br>
+			<button data-dojo-attach-event="onclick:search">Find Consent</button>
+			<div id='info'></div>
+			<div id='addLoc' style="display:none">
+				<button id='addButton' data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add Consent to Map</button>
+			</div>
+			<br>
 		</div>
 		<br>
+		<h2>or Addresses</h2>
+		<br>
+		<div id='consentSearch'></div>
+		<br>
+		<button id='addSearchLoc' data-dojo-attach-event="onclick:location">Add Location</button>
+		<br>
+		<br>
 	</div>
-	<br>
-	<h2>or Addresses</h2>
-	<br>
-	<div id='consentSearch'></div>
-	<br>
-	<button id='addSearchLoc' data-dojo-attach-event="onclick:location">Add Location</button>
-	<br>
-	<br>
 	<h3>Current Locations:</h3>
 	<div id='current' style='display:none'>
 	</div>
@@ -68,20 +70,21 @@
 				<option value="Amberley">Amberley</option>
 				<option value="Kaikoura">Kaikoura</option>
 			</select>
-		<div>
+		</div>
+		<br>
+		<button id='route' data-dojo-attach-event="onclick:route" >Route</button>
+		<button id='clear' data-dojo-attach-event="onclick:clear">Clear</button>
+		<br>
+		<button id ='apportion' data-dojo-attach-event="onclick:ratio" disabled="true">Apportion Chargeable Distance</button>
+		<br>
+		<div id='results' display='none'></div>
+		<div id="routeResult" display='none'></div>
+		<div id="chargeable" display='none'></div>
+		<br>
+		<div id='calcloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
 	</div>
-	<br>
-	<button id='route' data-dojo-attach-event="onclick:route" >Route</button>
-	<button id='clear' data-dojo-attach-event="onclick:clear">Clear</button>
-	<br>
-	<div id='results' display='none'></div>
-	<div id="routeResult" display='none'></div>
-	<div id="chargeable" display='none'></div>
-	<br>
-	<div id = 'returnButton'>
+		<div id = 'returnButton'>
 		<button id='return' data-dojo-attach-event="onclick:return" disabled="true">Return to Trip Splitter</button>
 	</div>
-	<br>
-	<br>
-	<div id='calcloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
+
 </div>
