@@ -133,7 +133,7 @@ function(declare, BaseWidget,
                         "consents":[],
                         "closestDepot":[],
                         "depotDist":[],
-                        "chargeable":[]
+                        "chargeable":[0,0,0,0]
                       };
 
     URLconsents = [];
@@ -302,7 +302,7 @@ function(declare, BaseWidget,
             var allDepots = [timaruDepot,christchurchDepot,amberleyDepot,kaikouraDepot];
             this.excess(allDepots)
             // display resutls in a div element.
-            document.getElementById("results").innerHTML =resultString;
+            document.getElementById("results").innerHTML = resultString;
         }));
     },
 
@@ -335,7 +335,11 @@ function(declare, BaseWidget,
         }
         var allRoutes = [timaruRoute,christchurchRoute,amberleyRoute,kaikouraRoute]
 
-        eRoute = new RouteTask(this.config.routeService);
+        tRoute = new RouteTask(this.config.routeService);
+        cRoute = new RouteTask(this.config.routeService);
+        aRoute = new RouteTask(this.config.routeService);
+        kRoute = new RouteTask(this.config.routeService);
+
         eParams = new RouteParams;
 
         eParams.outSpatialReference = sRef;
@@ -345,12 +349,22 @@ function(declare, BaseWidget,
         eParams.preserveFirstStop = true;
         eParams.preserveLastStop = true;
         eParams.useHierarchy = true;
-        slop = 0
-        eRoute.on('solve-complete',function(evt){
+
+        tRoute.on('solve-complete',function(evt){ // Timaru
             var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
-            slop = slop + Number(totalDist);
-            tripSplitResult['chargeable']=slop;
-            document.getElementById("chargeable").innerHTML = '<p>Chargeable Distance is ' + slop +'km.</p>'
+            tripSplitResult['chargeable'][0]=totalDist;
+        });
+        cRoute.on('solve-complete',function(evt){ // Christchurch
+            var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
+            tripSplitResult['chargeable'][1]=totalDist;
+        });
+        aRoute.on('solve-complete',function(evt){ // Amberley
+            var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
+            tripSplitResult['chargeable'][2]=totalDist;
+        });
+        kRoute.on('solve-complete',function(evt){ // Kaikoura
+            var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
+            tripSplitResult['chargeable'][3]=totalDist;
         });
 
         for (i in allRoutes){
@@ -368,7 +382,7 @@ function(declare, BaseWidget,
                     //end
                     stops.push(depotGraphic[0])
                     eParams.stops.features = stops;
-                    eRoute.solve(eParams);
+                    tRoute.solve(eParams);
 
                 } else if (i == 1){ // Christchurch
                     eParams.stops = new FeatureSet();
@@ -381,7 +395,7 @@ function(declare, BaseWidget,
                     //end
                     stops.push(depotGraphic[1])
                     eParams.stops.features = stops;
-                    eRoute.solve(eParams);
+                    cRoute.solve(eParams);
                 } else if (i == 2){ // Amberbley
                     eParams.stops = new FeatureSet();
                     stops = []
@@ -393,7 +407,7 @@ function(declare, BaseWidget,
                     //end
                     stops.push(depotGraphic[2])
                     eParams.stops.features = stops;
-                    eRoute.solve(eParams);
+                    aRoute.solve(eParams);
                 } else {
                     eParams.stops = new FeatureSet();
                     stops = []
@@ -405,12 +419,10 @@ function(declare, BaseWidget,
                     //end
                     stops.push(depotGraphic[3])
                     eParams.stops.features = stops;
-                    eRoute.solve(eParams);
+                    kRoute.solve(eParams);
                 }
             }
         }
-
-
     },
 
     search: function() {
@@ -554,11 +566,13 @@ function(declare, BaseWidget,
         document.getElementById("routeResult").innerHTML = '';
         document.getElementById("results").innerHTML = '';
         document.getElementById("chargeable").innerHTML = '';
-        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"chargeable":[]
+        document.getElementById('apportion').disabled = true
+        tripSplitResult = {"tripID":0,"totalDist":0,"consents":[],"closestDepot":[],"depotDist":[],"chargeable":[0,0,0,0]
     };
     },
 
     route: function(){
+        document.getElementById("chargeable").innerHTML = '';
         error = false
         try {
             _viewerMap._layers.graphicsLayer2.clear();
@@ -664,18 +678,14 @@ function(declare, BaseWidget,
                 var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength*100))/100).toFixed(1));
                 tripSplitResult['totalDist'] = totalDist;
 
-                document.getElementById("routeResult").innerHTML = "<p>Total Distance is "+totalDist+"kms.</p>";
+                document.getElementById("routeResult").innerHTML = "<p>Total Traveled Distance is "+totalDist+"kms.</p>";
 
                 var route = evt.result.routeResults[0].route.setSymbol(routeSymbol);
                 this.map.graphics.add(route);
                 this.map.setExtent(evt.result.routeResults[0].directions.extent,true);
                 toggle_visibility('calcloading','hide');
             }));
-
-            // if no consents are specified in the URL, disable the button to return to the Trip Spliter.
-            if (URLconsents[0] !== undefined){
-                document.getElementById('return').disabled = false;
-            }
+            document.getElementById('apportion').disabled = false;
         }
     },
 
@@ -683,17 +693,92 @@ function(declare, BaseWidget,
         // sets up the URL to send back to the trip spliter
         url = this.config.tripSpliterURL;
         get ='tripID='+tripSplitResult['tripID']+'&totalDist='+tripSplitResult['totalDist'];
-        for (i in tripSplitResult['consents']){
-            get = get +'&crc'+i+'='+tripSplitResult['consents'][i];
-            get = get +'&crcDepot'+i+'='+tripSplitResult['closestDepot'][i];
-            get = get +'&crcDepotDist'+i+'='+tripSplitResult['depotDist'][i];
+        get = get +'&chargeable='+totalCDist;
+        for (i in chargeableDist){
+            get = get +'&'+chargeableDist[i][0]+'='+(((Math.round(chargeableDist[i][1]*100))/100).toFixed(1))
         }
-        get = get +'&chargeable='+tripSplitResult['chargeable'];
         url = url+get;
         var win = window.open(url, '_blank');
         win.focus();
     },
 
+    ratio: function(){
+        toggle_visibility('chargeable', 'hide')
+        document.getElementById('chargeable').innerHTML = ''
+        var Timaru = []
+        var Christchurch = []
+        var Amberley = []
+        var Kaikoura = []
+
+        var tDist = 0
+        var cDist = 0
+        var aDist = 0
+        var kDist = 0
+
+        for (i in tripSplitResult['consents']){
+            if (tripSplitResult['closestDepot'][i] == "Timaru"){
+                r = [tripSplitResult['consents'][i], tripSplitResult['depotDist'][i]]
+                tDist = tDist + Number(tripSplitResult['depotDist'][i])
+                Timaru.push(r)
+            } else if (tripSplitResult['closestDepot'][i] == "Christchurch"){
+                r = [tripSplitResult['consents'][i], tripSplitResult['depotDist'][i]]
+                cDist = cDist + Number(tripSplitResult['depotDist'][i])
+                Christchurch.push(r)
+            } else if (tripSplitResult['closestDepot'][i] == "Amberley"){
+                r = [tripSplitResult['consents'][i], tripSplitResult['depotDist'][i]]
+                aDist = aDist + Number(tripSplitResult['depotDist'][i])
+                Amberley.push(r)
+            } else {
+                r = [tripSplitResult['consents'][i], tripSplitResult['depotDist'][i]]
+                kDist = kDist + Number(tripSplitResult['depotDist'][i])
+                Kaikoura.push(r)
+            }
+        }
+        var allDepot = [Timaru,Christchurch,Amberley,Kaikoura]
+        var ratio = [[],[],[],[]]
+        for (j in allDepot){
+            for (k in allDepot[j]){
+                if (j == 0){
+                    ratio[0].push([allDepot[j][k][0],(Number(allDepot[j][k][1])/tDist)])
+                } else if (j == 1){
+                    ratio[1].push([allDepot[j][k][0],(Number(allDepot[j][k][1])/cDist)])
+                } else if (j == 2){
+                    ratio[2].push([allDepot[j][k][0],(Number(allDepot[j][k][1])/aDist)])
+                } else {
+                    ratio[3].push([allDepot[j][k][0],(Number(allDepot[j][k][1])/kDist)])
+                }
+            }
+        }
+        chargeableDist = []
+        totalCDist = Number(tripSplitResult['chargeable'][0])+Number(tripSplitResult['chargeable'][1])+Number(tripSplitResult['chargeable'][2])+Number(tripSplitResult['chargeable'][3])
+        for (l in ratio){
+            for (m in ratio[l]){
+                if (l == 0){
+                    chargeableDist.push([ratio[l][m][0],ratio[l][m][1]*Number(tripSplitResult['chargeable'][0])])
+                } else if (l == 1){
+                    chargeableDist.push([ratio[l][m][0],ratio[l][m][1]*Number(tripSplitResult['chargeable'][1])])
+                } else if (l == 2){
+                    chargeableDist.push([ratio[l][m][0],ratio[l][m][1]*Number(tripSplitResult['chargeable'][2])])
+                } else {
+                    chargeableDist.push([ratio[l][m][0],ratio[l][m][1]*Number(tripSplitResult['chargeable'][3])])
+                }
+
+            }
+        }
+
+        for (n in chargeableDist){
+            km = (((Math.round(chargeableDist[n][1]*100))/100).toFixed(1))
+            document.getElementById('chargeable').innerHTML = document.getElementById('chargeable').innerHTML+'<p>'+chargeableDist[n][0]+' has '+km+' chargeable kilometers.</p>'
+        }
+        slop = (tripSplitResult['totalDist']-totalCDist)
+        slop = (((Math.round(slop*100))/100).toFixed(1))
+        document.getElementById('chargeable').innerHTML = document.getElementById('chargeable').innerHTML+'<p>Total non-billable is '+slop+' km.</p>'
+        toggle_visibility('chargeable', 'show')
+        // if no consents are specified in the URL, disable the button to return to the Trip Spliter.
+        if (URLconsents[0] !== undefined){
+            document.getElementById('return').disabled = false;
+        }
+    },
 
     startup: function(){
 
@@ -705,7 +790,7 @@ function(declare, BaseWidget,
         // On widget startup, detects any present consents in the URL
         toggle_visibility('returnButton', 'hide');
         if ((URLconsents.length > 0) && (URLconsents[0] !== undefined)){
-            toggle_visibility('CRCSearch', 'hide');
+            toggle_visibility('find', 'hide');
             toggle_visibility('returnButton', 'show');
             for (i in URLconsents){
                 this.searchURL(URLconsents[i]);
