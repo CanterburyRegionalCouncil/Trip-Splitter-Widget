@@ -12,6 +12,12 @@ function toggle_visibility(id, display) {
     else{}
 };
 
+	//method to just toggle visibility
+function toggleEndLoc() {
+		toggle_visibility('endloc','show');
+		toggle_visibility('toggleEndLoc','hide');
+};
+
 function configureDropDownLists(ddl1,ddl2) {
     var e = new Array('','Timaru','Christchurch','Amberley','Kaikoura')
     var t = new Array('Timaru','','Christchurch','Amberley','Kaikoura')
@@ -133,15 +139,19 @@ function(declare, BaseWidget,
                         "consents":[],
                         "closestDepot":[],
                         "depotDist":[],
-                        "chargeable":[0,0,0,0]
+                        "chargeable":[0,0,0,0],
+						"VehicleKey":0
                       };
 
     URLconsents = [];
     for (var key in QueryString ) {
         if (key == 'tripID'){
             // Gets the tripID from the URL
-            tripSplitResult['tripID'] = QueryString['tripID']
-        } else if (QueryString.hasOwnProperty(key)) {
+            tripSplitResult['tripID'] = QueryString['tripID'];
+        } else if(key == 'VehicleKey'){
+			  // Gets the VehicleKey from the URL
+            tripSplitResult['VehicleKey'] = QueryString['VehicleKey'];
+		} else if (QueryString.hasOwnProperty(key)) {
         // Puts all the consent codes into an array
         URLconsents.push(QueryString[key]);
       }
@@ -204,7 +214,7 @@ function(declare, BaseWidget,
         this.inherited(arguments);
         console.log('Calculate::postCreate');
     },
-
+	
 // This function works out which depot is the closest for each point
     closest: function() {
         // make sure the result div is empty
@@ -537,7 +547,6 @@ function(declare, BaseWidget,
             document.getElementById("current").innerHTML = document.getElementById("current").innerHTML +'<p>'+ consentSearchLoc[0].name +'</p>';
         }
     },
-
     clear: function() {
         // clear the map and all input fields ect
         // doesn't clear consent locations if they have be taken from the URL
@@ -694,6 +703,7 @@ function(declare, BaseWidget,
         url = this.config.tripSpliterURL;
         get ='tripID='+tripSplitResult['tripID']+'&totalDist='+tripSplitResult['totalDist'];
         get = get +'&chargeable='+totalCDist;
+		get = get + '&VehicleKey=' +tripSplitResult['VehicleKey'];
         for (i in chargeableDist){
             get = get +'&'+chargeableDist[i][0]+'='+(((Math.round(chargeableDist[i][1]*100))/100).toFixed(1))
         }
