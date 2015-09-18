@@ -80,7 +80,7 @@ QueryString = function () {
         // If first entry with this name
         if (typeof query_string[pair[0]] === "undefined") {
             if ((pair[0] === 'tripID') || (pair[0] === 'VehicleKey') || (pair[0].indexOf('crc') > -1) || (pair[0].indexOf('CRC') > -1)) {
-                query_string[pair[0]] = pair[1];
+                query_string[pair[0]] = pair[1].toUpperCase();
             }
             // If second entry with this name
         } else if (typeof query_string[pair[0]] === "string") {
@@ -90,7 +90,7 @@ QueryString = function () {
         } else {
             query_string[pair[0]].push(pair[1]);
         }
-    }
+    };
     return query_string;
 }();
 
@@ -740,7 +740,7 @@ function (declare, BaseWidget,
                 get = get + '&' + chargeableDist[i][0] + '=' + (((Math.round(chargeableDist[i][1] * 100)) / 100).toFixed(1))
             }
             url = url + get;
-            var win = window.open(url, '_blank');
+            var win = window.open(url, '_self');
             win.focus();
         },
 
@@ -817,9 +817,10 @@ function (declare, BaseWidget,
             document.getElementById('chargeable').innerHTML = document.getElementById('chargeable').innerHTML + "<p style='display:none!important' >Total non-billable is " + slop + ' km.</p>';
             toggle_visibility('chargeable', 'show');
             // if no consents are specified in the URL, disable the button to return to the Trip Spliter.
-            if (URLconsents[0] !== undefined) {
-                document.getElementById('return').disabled = false;
-            }
+            //REMOVED  NOT NEEDED
+            //if (URLconsents[0] !== undefined) {
+            //    document.getElementById('return').disabled = false;
+            //}
         },
 
         startup: function () {
@@ -828,9 +829,10 @@ function (declare, BaseWidget,
             startEndlayer = new GraphicsLayer();
             startEndlayer.setRenderer(startEndRenderer);
 
+            //NOT NEEDED AS THE USER NEEDS TO RETURN REGARDLESS
+            //// On widget startup, detects any present consents in the URL
+            //toggle_visibility('returnButton', 'hide');
 
-            // On widget startup, detects any present consents in the URL
-            toggle_visibility('returnButton', 'hide');
             if ((URLconsents.length > 0) && (URLconsents[0] !== undefined)) {
                 /// remove this as they will add more ...
                 ///toggle_visibility('find', 'hide');
