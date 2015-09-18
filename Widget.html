@@ -1,90 +1,106 @@
 <div>
-	<h1>Step 1</h1>
-	<div id = 'find'>
-		<h2>Find Consents</h2>
-		<div id='CRCSearch'>		
-			<br>
-			<input type="text" id="searchText" value="CRC" />
-			<br>
-			<br>
-			<button data-dojo-attach-event="onclick:search">Find Consent</button>
-			<div id='info'></div>
-			<div id='addLoc' style="display:none">
-				<button id='addButton' data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add Consent to Map</button>
-			</div>
-			<br>
-		</div>
-		<br>
-		<h2>or Addresses</h2>
-		<br>
-		<div id='consentSearch'></div>
-		<br>
-		<button id='addSearchLoc' data-dojo-attach-event="onclick:location">Add Location</button>
-		<br>
-		<br>
-	</div>
-	<h3>Current Locations:</h3>
-	<div id='current' style='display:none'>
-	</div>
-	<div id='currentloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
-	<br>
-	<br>
-	<div id = 'locations'>
-		<h1>Step 2</h1>	
-		<h2>Start Location: </h2>
-		<div id = 'start'>
-			<h3>Search or</h3>
-			<p>
-				<!-- <input type="text" id="fromTxf" value=""> -->
-				<div id='startSearch'></div>
-				<div id='startError' style='display:none'>Location not valid</div>
-				<!-- <button id="Start" data-dojo-attach-event="onclick:start">Add Start</button> -->
-			</p>
-			<br>
-			<h3>Use Depot Location</h3>
-			<select id="startSelect" onchange="configureDropDownLists(this,document.getElementById('endSelect'))">
-				<option value =""></option>
-				<option value="Timaru">Timaru</option>
-				<option value="Christchurch">Christchurch</option>
-				<option value="Amberley">Amberley</option>
-				<option value="Kaikoura">Kaikoura</option>
-			</select>
-		</div>
-		<br>
-		<br>
-		<h2>End Location: </h2>
-		<div id = 'end'>
-			<h3>Search or</h3>
-			<p>
-				<!-- <input type="text" id="toTxf" value=""> -->
-				<div id='endSearch'></div>
-				<div id='endError' style='display:none'>Location not valid</div>
-				<!-- <button id="End" data-dojo-attach-event="onclick:end">Add End</button> -->
-			</p>
-			<br>
-			<h3>Use Depot Location</h3>
-			<select id="endSelect">
-				<option value =""></option>
-				<option value="Timaru">Timaru</option>
-				<option value="Christchurch">Christchurch</option>
-				<option value="Amberley">Amberley</option>
-				<option value="Kaikoura">Kaikoura</option>
-			</select>
-		</div>
-		<br>
-		<button id='route' data-dojo-attach-event="onclick:route" >Route</button>
-		<button id='clear' data-dojo-attach-event="onclick:clear">Clear</button>
-		<br>
-		<button id ='apportion' data-dojo-attach-event="onclick:ratio" disabled="true">Apportion Chargeable Distance</button>
-		<br>
-		<div id='results' display='none'></div>
-		<div id="routeResult" display='none'></div>
-		<div id="chargeable" display='none'></div>
-		<br>
-		<div id='calcloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
-	</div>
-		<div id = 'returnButton'>
-		<button id='return' data-dojo-attach-event="onclick:return" disabled="true">Return to Trip Splitter</button>
-	</div>
+    <div class="well">
+        <h1>Step 1: Enter locations</h1>
+        <div id='find'>
+            <div id='CRCSearch'>
+                <br>
+                <input type="text" id="searchText" value="CRC" />
+                <br>
+                <br>
+                <button class="btn btn-primary" data-dojo-attach-event="onclick:search">Find via consent No</button>
+                <br>
+                <br>
+                <div class="alert alert-info" id='info' style="display:none">
+                </div>
+                <div id='addLoc' style="display:none">
+                    <button id='addButton' class="btn btn-primary" data-dojo-attach-event="onclick:consentDisplay" disabled="true">Add location</button>
+                </div>
+                <br>
+            </div>
+            <br>
+            <h2>or via address</h2>
+            <br>
+            <div id='consentSearch'></div>
+            <br>
+            <button id='addSearchLoc' class="btn btn-primary" data-dojo-attach-event="onclick:location">Add location</button>
+            <br>
+            <br>
+        </div>
+        <div class="alert alert-success">
+            <h4>Current locations:</h4>
+            <div id='current' style='display:none'>
+            </div>
+        </div>
+        <div id='currentloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
+    </div>
+    <div class="well">
+        <div id='locations'>
+            <h1>Step 2: Enter start location</h1>
+            <div id='start'>
+                <h3>Use depot location or</h3>
+                <select id="startSelect" onchange="configureDropDownLists(this,document.getElementById('endSelect'))">
+                    <option value=""></option>
+                    <option value="Timaru">Timaru</option>
+                    <option value="Christchurch">Christchurch</option>
+                    <option value="Amberley">Amberley</option>
+                    <option value="Kaikoura">Kaikoura</option>
+                </select>
+                <br>
+                <h3>Search for location</h3>
+                <p>
+                    <div id='startSearch'></div>
+                    <div id='startError' style='display:none'>Location not valid</div>
+                </p>
+            </div>
+            <br>
+            <div id="toggleEndLoc" class="checkbox">
+                <label>
+                    <input type="checkbox" onclick="toggleEndLoc();" /> My end location is different
+                </label>
+            </div>
+            <div id="endloc" style="display:none">
+                <br>
+                <h2>End Location: </h2>
+                <div id='end'>
+                    <h3>Use depot location or</h3>
+                    <select id="endSelect">
+                        <option value=""></option>
+                        <option value="Timaru">Timaru</option>
+                        <option value="Christchurch">Christchurch</option>
+                        <option value="Amberley">Amberley</option>
+                        <option value="Kaikoura">Kaikoura</option>
+                    </select>
+                    <h3>Search for location</h3>
+                    <p>
+                        <div id='endSearch'></div>
+                        <div id='endError' style='display:none'>Location not valid</div>
+                    </p>
+                    <br>
 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="well">
+        <h1>Step 3: Calculate distances &amp; charges</h1>
+        <br>
+        <button id='route' class="btn btn-primary" data-dojo-attach-event="onclick:route">Calculate</button>
+        <button id='clear' class="btn btn-primary" data-dojo-attach-event="onclick:clear">Clear</button>
+        <br>
+        <br>
+        <div id='results' style="display:none" class="alert alert-info"></div>
+        <div id="routeResult" class="alert alert-info" style="display:none"></div>
+        <div id='calcloading' style="width: 50%;margin: 0 auto; display:none"><img src="images\loading.gif"></div>
+        <div id="chargeable" class="alert alert-success" role="alert" style="display:none;"></div>
+    </div>
+    <!--<div class="well">
+        <h1>Step 4: Calculate charges</h1>
+        <br>
+        <button id='apportion' class="btn btn-primary hidden" data-dojo-attach-event="onclick:ratio" disabled="true">Calculate</button>
+        <br>
+        <br>
+    </div>-->
+    <div id='returnButton'>
+        <button id='return' class="btn btn-primary" data-dojo-attach-event="onclick:return" >Return to trip splitter</button>
+    </div>
 </div>
