@@ -1,8 +1,8 @@
 {
 	"widgetName": "TripDistanceCalculator",
-	"closestFacilityService": "http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Closest%20Facility",
-	"routeService": "http://dev3.interpret.co.nz/arcgisdev3/rest/services/ECAN_Web_AppBuilder/Canterbury_OSM_ND_Dissolved/NAServer/Route",
-	"depotLocs": "1460349.4084,5082561.0188;1558900.7229,5167823.4527;1577887.9281,5222124.0212;1655889.3952,5306371.3995",
+	"closestFacilityService": "http://dev104.interpret.co.nz/arcgisdev104/rest/services/EcanTripSplitter/OSM_Network/NAServer/Closest%20Facility",
+	"routeService": "http://dev104.interpret.co.nz/arcgisdev104/rest/services/EcanTripSplitter/OSM_Network/NAServer/Route",
+	"depotLocs": "19063066.09029,-5527051.205031;19218043.503225,-5393809.457993;19228292.22018,-5335492.55181;19117370.71519,-5449914.209424",
 	"consentsLayer": "http://gis.ecan.govt.nz/arcgis/rest/services/Public/Resource_Consents/MapServer/0",
 	"geoCoder": "http://gis.ecan.govt.nz/arcgis/rest/services/Locators/Canterbury_Composite_Locator/GeocodeServer",
 	"tripSpliterURL": "/webappbuilder/apps/4/form/result.html?"

@@ -19,11 +19,11 @@ function toggleEndLoc() {
 };
 
 function configureDropDownLists(ddl1, ddl2) {
-    var e = new Array('', 'Timaru', 'Christchurch', 'Amberley', 'Kaikoura');
-    var t = new Array('Timaru', '', 'Christchurch', 'Amberley', 'Kaikoura');
-    var c = new Array('Christchurch', '', 'Timaru', 'Amberley', 'Kaikoura');
-    var a = new Array('Amberley', '', 'Timaru', 'Christchurch', 'Kaikoura');
-    var k = new Array('Kaikoura', '', 'Timaru', 'Christchurch', 'Amberley');
+    var e = new Array('', 'Timaru', 'Christchurch', 'Amberley', 'Ashburton');
+    var t = new Array('Timaru', '', 'Christchurch', 'Amberley', 'Ashburton');
+    var c = new Array('Christchurch', '', 'Timaru', 'Amberley', 'Ashburton');
+    var a = new Array('Amberley', '', 'Timaru', 'Christchurch', 'Ashburton');
+    var k = new Array('Ashburton', '', 'Timaru', 'Christchurch', 'Amberley');
 
     switch (ddl1.value) {
         case '':
@@ -50,7 +50,7 @@ function configureDropDownLists(ddl1, ddl2) {
                 createOption(ddl2, a[i], a[i]);
             }
             break;
-        case 'Kaikoura':
+        case 'Ashburton':
             ddl2.options.length = 0;
             for (i = 0; i < k.length; i++) {
                 createOption(ddl2, k[i], k[i]);
@@ -270,7 +270,7 @@ function (declare, BaseWidget,
                     } else if (number == '3') {
                         return 'Amberley';
                     } else {
-                        return 'Kaikoura';
+                        return 'Ashburton';
                     }
                 };
 
@@ -282,7 +282,7 @@ function (declare, BaseWidget,
                 var timaruDepot = [];
                 var christchurchDepot = [];
                 var amberleyDepot = [];
-                var kaikouraDepot = [];
+                var AshburtonDepot = [];
 
                 // iterate through results and prepare to display them.
                 tripSplitResult['consents'] = [];
@@ -302,7 +302,7 @@ function (declare, BaseWidget,
                         amberleyDepot.push([((results.routeName.split(' ')[1]) - 1), CRCid((results.routeName.split(' ')[1]) - 1)]);
                     }
                     if (results.routeName.split(' ')[4] === '4') {
-                        kaikouraDepot.push([((results.routeName.split(' ')[1]) - 1), CRCid((results.routeName.split(' ')[1]) - 1)]);
+                        AshburtonDepot.push([((results.routeName.split(' ')[1]) - 1), CRCid((results.routeName.split(' ')[1]) - 1)]);
                     }
 
                     string("<p><span class='glyphicon glyphicon-flag' aria-hidden='true'>&nbsp;</span>");
@@ -316,7 +316,7 @@ function (declare, BaseWidget,
                     tripSplitResult['closestDepot'].push(depot(results.routeName.split(' ')[4]));
                     tripSplitResult['depotDist'].push(((Math.round(results.totalLength * 100)) / 100).toFixed(1));
                 };
-                var allDepots = [timaruDepot, christchurchDepot, amberleyDepot, kaikouraDepot];
+                var allDepots = [timaruDepot, christchurchDepot, amberleyDepot, AshburtonDepot];
                 this.excess(allDepots);
                 // display resutls in a div element.
                 document.getElementById("results").innerHTML = "<h4>Distances (oneway)</h4>" + resultString;
@@ -332,7 +332,7 @@ function (declare, BaseWidget,
             var timaruRoute = [];
             var christchurchRoute = [];
             var amberleyRoute = [];
-            var kaikouraRoute = [];
+            var AshburtonRoute = [];
 
             // add all the consent locations to a list so they can be iterated through a route solve
             for (i in consents) {
@@ -347,13 +347,13 @@ function (declare, BaseWidget,
                             } else if (i == 2) {
                                 amberleyRoute.push(consentLocattr[consents[i][j][0]][2]);
                             } else {
-                                kaikouraRoute.push(consentLocattr[consents[i][j][0]][2]);
+                                AshburtonRoute.push(consentLocattr[consents[i][j][0]][2]);
                             }
                         }
                     } catch (e) { }
                 }
             };
-            var allRoutes = [timaruRoute, christchurchRoute, amberleyRoute, kaikouraRoute];
+            var allRoutes = [timaruRoute, christchurchRoute, amberleyRoute, AshburtonRoute];
 
             tRoute = new RouteTask(this.config.routeService);
             cRoute = new RouteTask(this.config.routeService);
@@ -385,7 +385,7 @@ function (declare, BaseWidget,
                 tripSplitResult['chargeable'][2] = totalDist;
                 me.ratio();
             });
-            kRoute.on('solve-complete', function (evt) { // Kaikoura
+            kRoute.on('solve-complete', function (evt) { // Ashburton
                 var totalDist = (((Math.round(evt.result.routeResults[0].directions.totalLength * 100)) / 100).toFixed(1));
                 tripSplitResult['chargeable'][3] = totalDist;
                 me.ratio();
@@ -750,7 +750,7 @@ function (declare, BaseWidget,
             var Timaru = [];
             var Christchurch = [];
             var Amberley = [];
-            var Kaikoura = [];
+            var Ashburton = [];
 
             var tDist = 0;
             var cDist = 0;
@@ -773,10 +773,10 @@ function (declare, BaseWidget,
                 } else {
                     r = [tripSplitResult['consents'][i], tripSplitResult['depotDist'][i]];
                     kDist = kDist + Number(tripSplitResult['depotDist'][i]);
-                    Kaikoura.push(r);
+                    Ashburton.push(r);
                 }
             };
-            var allDepot = [Timaru, Christchurch, Amberley, Kaikoura];
+            var allDepot = [Timaru, Christchurch, Amberley, Ashburton];
             var ratio = [[], [], [], []];
             for (j in allDepot) {
                 for (k in allDepot[j]) {
